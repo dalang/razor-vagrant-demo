@@ -1,6 +1,7 @@
 require 'rake'
 require 'net/ssh'
 require 'net/scp'
+require 'vagrant-wrapper'
 
 USER = PASSWORD = 'vagrant'
 HOSTS = {
@@ -62,7 +63,9 @@ end
 desc "Start here. Provision & configure the Razor server."
 task :start do
   sh('librarian-puppet install')
-  sh('vagrant up')
+  # origin repo use vagrant 1.0.3 from gem
+  # switch to use vagrant 1.2 installed via the official package
+  VagrantWrapper.new.execute "up"
 end
 
 DISTROS.each do |name, options|

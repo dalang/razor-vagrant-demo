@@ -19,6 +19,14 @@ node gold {
     gateway => $ipaddr,
   }
 
+  # sets default paths
+  exec {
+    path => ["/usr/bin", "/bin", "/usr/sbin", "/sbin", "/usr/local/bin", "/usr/local/sbin"]
+  }
+  include tools
+  include tools::ohmyzsh
+  include tools::eddievim
+
   include razor
 
   sudo::conf { 'vagrant':
