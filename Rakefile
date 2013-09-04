@@ -63,6 +63,8 @@ end
 desc "Start here. Provision & configure the Razor server."
 task :start do
   sh('librarian-puppet install')
+  # origin repo use vagrant 1.0.3 from gem
+  # switch to use vagrant 1.2 installed via the official package
   VagrantWrapper.new.execute "up"
 end
 

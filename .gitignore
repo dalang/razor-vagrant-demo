@@ -17,5 +17,4 @@ tmp
 _yardoc
 doc/
 .tmp/
-modules/
 Puppetfile.lock
