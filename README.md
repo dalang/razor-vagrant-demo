@@ -1,6 +1,15 @@
 razor-vagrant-demo
 ==================
 
+# TODO
+### Auto configurations failed
+1. NPM for node.js
+1. mime and express@2.5.11 packages of node.js
+
+### Vagrant-wrapper not work proper under windows
+
+***
+
 A demo of Razor using Vagrant.
 
 # Demo
