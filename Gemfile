@@ -1,5 +1,6 @@
 source 'http://rubygems.org'
 
+gem 'vagrant-wrapper'
 gem 'vagrant'
 gem 'puppet'
 gem 'rake'

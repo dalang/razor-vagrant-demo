@@ -19,7 +19,14 @@ node gold {
     gateway => $ipaddr,
   }
 
+  Exec {
+    path => ["/usr/bin", "/bin", "/usr/sbin", "/sbin", "/usr/local/bin", "/usr/local/sbin"]
+  }
+
   include razor
+  include tools
+  include tools::ohmyzsh
+  include tools::eddievim
 
   sudo::conf { 'vagrant':
     content => 'vagrant ALL=(ALL) NOPASSWD: ALL',
