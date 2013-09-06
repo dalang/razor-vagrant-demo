@@ -11,7 +11,7 @@ HOSTS = {
 DISTROS = {
   'microkernel' => {
     :type => :mk,
-    :url  => 'https://github.com/downloads/puppetlabs/Razor/rz_mk_dev-image.0.9.0.4.iso',
+    :url  => 'https://downloads.puppetlabs.com/razor/iso/dev/rz_mk_dev-image.0.12.0.iso',
   },
   'ubuntu' => {
     :release => 'ubuntu_precise',
@@ -43,6 +43,7 @@ def scp(host, local_path, remote_path, user = USER, password = PASSWORD)
 end
 
 def razor(*a)
+  puts ['sudo /opt/razor/bin/razor', *a].join(' ')
   puts ssh(:gold).exec!(['sudo /opt/razor/bin/razor', *a].join(' '))
 end
 
@@ -92,7 +93,7 @@ DISTROS.each do |name, options|
 
     task :setup => :upload do
       if options[:type] == :mk
-        razor('image', 'add', 'mk', remote_file_name)
+        razor('image', 'add', '-t mk', '-p ' + remote_file_name)
       else
         razor('image', 'add', 'os', remote_file_name, options[:release], options[:version])
       end

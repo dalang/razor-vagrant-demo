@@ -5,8 +5,21 @@ razor-vagrant-demo
 ### Auto configurations failed
 1. NPM for node.js
 1. mime and express@2.5.11 packages of node.js
+1. set agent1 network to host-only type **manually**
 
-### Vagrant-wrapper not work proper under windows
+### Mongodb service cannot start
+If it happens, `razor` will not work.
+This always caused by VM not be shutdown gracefully.
+Try the solution as follow.
+
+* ssh to VM
+* delete mongodb.lock file at /var/lib/mongodb/
+* restart mongodb service
+
+### Host OS is Windows
+* Vagrant-wrapper not work proper under windows
+* puppet cannot work as a gem under windows, install puppet by windows installer instead. Try to comment it out from Gemfile.lock when under Windows.
+* `librarian-puppet` gem depends on `puppet` gem, so won't work under windows either. Try to comment it out from Gemfile.lock when under Windows.
 
 ***
 
