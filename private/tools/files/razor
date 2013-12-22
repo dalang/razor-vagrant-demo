@@ -13,12 +13,12 @@ _1st_arguments=(
   'policy:used to view, create, update, and remove policies.'
   'tag:used to view, create, update, and remove tags.'
   'vmodel:used to add, view, update, and remove vmodels.'
+  'task:used to add, view, update, and remove tasks.'
 )
 
 local -a _active_model_arguments
 _active_model_arguments=(
   'get:View active models'
-  'serial:View specific active model by serial number'
   'logview:Prints an aggregate active model log view'
   'remove:Remove existing (or all) active model(s)'
 )
@@ -38,6 +38,14 @@ _model_arguments=(
   'remove:Remove existing model(s)'
 )
 
+local -a _vmodel_arguments
+_vmodel_arguments=(
+  'get:View vmodel'
+  'add:Create a new vmodel instance'
+  'update:Update a specific vmodel instance'
+  'remove:Remove existing vmodel(s)'
+)
+
 local -a _node_arguments
 _node_arguments=(
   'get:View node'
@@ -50,7 +58,6 @@ _policy_arguments=(
   'update:Update an existing policy'
   'remove:Remove existing policy(s)'
   'callback:Invoke a callback for an existing policy(s)'
-  'vcallback:Invoke a vmodel callback for an existing policy(s)'
 )
 
 local -a _tag_arguments
@@ -62,18 +69,16 @@ _tag_arguments=(
   'matcher:Tag Matcher'
 )
 
-local -a _vmodel_arguments
-_vmodel_arguments=(
-  'get:View vmodel'
-  'add:Create a new vmodel instance'
-  'update:Update a specific vmodel instance'
-  'remove:Remove existing vmodel(s)'
+_task_arguments=(
+  'get:View task'
+  'add:Create a new task instance'
+  'update:Update a specific task instance'
+  'remove:Remove existing task(s)'
 )
 
-local expl
-local -a active_model_formulae
-
 _arguments \
+  '(-f --force)'{-f,--force}'[Enforce to execute the command]' \
+  '(-c --cloudmanager)'{-c,--cloudmanager}'[Refine the results for http request from CloudManager]' \
   '(-v --verbose)'{-v,--verbose}'[Enables verbose object printing]' \
   '(-d --debug)'{-d,--debug}'[Enables printing proper Ruby stacktrace]' \
   '(-w --webcommand)'{-w,--webcommand}'[Accepts web commands.]' \
@@ -113,7 +118,8 @@ case "$words[1]" in
               '(-p --path)'{-p,--path}'[The local path to the image ISO]' \
               '(-n --name)'{-n,--name}'[The logical name to use (os/win images only)]' \
               '(-v --version)'{-v,--version}'[The version to use (os/win images only)]' \
-              '(-h --help)'{-h,--help}'[Display image add help info.]' && ret=0
+              '(-h --help)'{-h,--help}'[Display image add help info.]' \
+              "*::image add:_files -g '(#i)*.(iso|wim)'" && ret=0
           else
             _arguments '(-h --help)'{-h,--help}'[Dipslay help info]' && ret=0
           fi
@@ -148,6 +154,27 @@ case "$words[1]" in
           ;;
       esac
       ;;
+    vmodel)
+      _arguments \
+        '(-h --help)'{-h,--help}'[Dipslay help info]' \
+        '1: :->actions' \
+        '*::options:->options' && ret=0
+      case $state in
+        actions)
+          _describe -t commands "razor vmodel" _vmodel_arguments
+          ;;
+        options)
+          if [[ "$words[1]" == 'add' ]]; then
+            _arguments \
+              '(-t --template)'{-t,--template}"[The vmodel template to use for the new vmodel.]" \
+              '(-l --label)'{-l,--label}'[The label to use for the new vmodel.]' \
+              '(-h --help)'{-h,--help}'[Display vmodel add help info.]' && ret=0
+          else
+            _arguments '(-h --help)'{-h,--help}'[Dipslay help info]' && ret=0
+          fi
+          ;;
+      esac
+      ;;
     node)
       _arguments \
         '(-h --help)'{-h,--help}'[Dipslay help info]' \
@@ -170,7 +197,6 @@ case "$words[1]" in
               '(-p --template)'{-p,--template}'[The policy template name to use.]' \
               '(-l --label)'{-l,--label}'[A label to name this policy.]' \
               '(-m --model-uuid)'{-m,--model-uuid}'[The model to attach to the policy.]' \
-              '(-v --vmodel-uuid)'{-v,--vmodel-uuid}'[The vmodel to attach to the policy.]' \
               '(-b --broker-uuid)'{-b,--broker-uuid}"[The broker to attach to the policy \[default: none\].]" \
               '(-e --enabled)'{-e,--enabled}"[Should policy be enabled (true|false) \[default: false\]?]" \
               '(-x --maximum)'{-x,--maximum}"[Sets the policy maximum count for nodes \[default: 0\].]" \
@@ -179,7 +205,6 @@ case "$words[1]" in
             #_arguments \
               #'(-l --label)'{-l --label}'[A label to name this policy.]' \
               #'(-m --model-uuid)'{-m,--model-uuid}'[The model to attached to the policy.]' \
-              #'(-v --vmodel-uuid)'{-v,--vmodel-uuid}'[The vmodel attached to the policy [defualt: none].]' \
               #'(-b --broker-uuid)'{-b,--broker-uuid}'[The broker attached to the policy [default: none].]' \
               #'(-e --enabled)'{-e,--enabled}'[Should policy be enabled (true|false) [default: false]?]' \
               #'(-x --maximum)'{-x,--maximum}'[Sets the policy maximum count for nodes [default: 0].]' \
@@ -239,30 +264,28 @@ case "$words[1]" in
           ;;
       esac
       ;;
-    vmodel)
+    task)
       _arguments \
         '(-h --help)'{-h,--help}'[Dipslay help info]' \
         '1: :->actions' \
         '*::options:->options' && ret=0
       case $state in
         actions)
-          _describe -t commands "razor vmodel" _vmodel_arguments
+          _describe -t commands "razor task" _task_arguments
           ;;
         options)
           if [[ "$words[1]" == 'add' ]]; then
             _arguments \
+              '(-n --node_sn)'{-n,--node_sn}'[The node serial number for the task.]' \
+              '(-b --baking_mode)'{-b,--baking_mode}'[Should task do or only do baking(do|skip|solo)?]' \
+              '(-o --os)'{-o,--os}'[The OS to be installed in the task.]' \
+              '(-e --enabled)'{-e,--enabled}"[Should task be enabled (true|false) \[default: true\]?]" \
               '(-t --template)'{-t,--template}'[The vmodel template to use for the new vmodel.]' \
-              '(-l --label)'{-l,--label}'[The label to use for the new vmodel.]' \
-              '(-h --help)'{-h,--help}'[Display vmodel add help info.]' && ret=0
-          #elif [[ "$words[1]" == 'update' ]]; then
-            #_arguments \
-              #'(-l --label)'{-l,--label}'[The new label to use for the vmodel.]' \
-              #'(-c --change-metadata)'{-c,--change-metadata}"[Used to trigger a change in the vmodel's meta-data]" \
-              #'(-h --help)'{-h,--help}'[Display this screen.]' && ret=0
+              '(-h --help)'{-h,--help}'[Display task add help info.]' && ret=0
           else
             _arguments '(-h --help)'{-h,--help}'[Dipslay help info]' && ret=0
           fi
           ;;
       esac
       ;;
-esac
+  esac
