@@ -19,6 +19,16 @@ node gold {
     gateway => $ipaddr,
   }
 
+  file {
+    "/etc/localtime":
+      ensure => "/usr/share/zoneinfo/Asia/Shanghai"
+  }
+
+  file {
+    "/etc/timezone":
+      content => "Asia/Shanghai\n",
+  }
+
   Exec {
     path => ["/usr/bin", "/bin", "/usr/sbin", "/sbin", "/usr/local/bin", "/usr/local/sbin"]
   }
