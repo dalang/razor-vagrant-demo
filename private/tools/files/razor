@@ -12,13 +12,12 @@ _1st_arguments=(
   'node:used to view the current list of nodes (or node details)'
   'policy:used to view, create, update, and remove policies.'
   'tag:used to view, create, update, and remove tags.'
-  'vmodel:used to add, view, update, and remove vmodels.'
-  'task:used to add, view, update, and remove tasks.'
 )
 
 local -a _active_model_arguments
 _active_model_arguments=(
   'get:View active models'
+  'serial:View specific active model by serial number'
   'logview:Prints an aggregate active model log view'
   'remove:Remove existing (or all) active model(s)'
 )
@@ -36,14 +35,6 @@ _model_arguments=(
   'add:Create a new model instance'
   'update:Update a specific model instance'
   'remove:Remove existing model(s)'
-)
-
-local -a _vmodel_arguments
-_vmodel_arguments=(
-  'get:View vmodel'
-  'add:Create a new vmodel instance'
-  'update:Update a specific vmodel instance'
-  'remove:Remove existing vmodel(s)'
 )
 
 local -a _node_arguments
@@ -69,16 +60,7 @@ _tag_arguments=(
   'matcher:Tag Matcher'
 )
 
-_task_arguments=(
-  'get:View task'
-  'add:Create a new task instance'
-  'update:Update a specific task instance'
-  'remove:Remove existing task(s)'
-)
-
 _arguments \
-  '(-f --force)'{-f,--force}'[Enforce to execute the command]' \
-  '(-c --cloudmanager)'{-c,--cloudmanager}'[Refine the results for http request from CloudManager]' \
   '(-v --verbose)'{-v,--verbose}'[Enables verbose object printing]' \
   '(-d --debug)'{-d,--debug}'[Enables printing proper Ruby stacktrace]' \
   '(-w --webcommand)'{-w,--webcommand}'[Accepts web commands.]' \
@@ -148,27 +130,6 @@ case "$words[1]" in
               #'(-i --image-uuid)'{-i,--image-uuid}'[The new image UUID to use for the model.]' \
               #'(-c --change-metadata)'{-c,--change-metadata}"[Used to trigger a change in the model's meta-data]" \
               #'(-h --help)'{-h,--help}'[Display this screen.]' && ret=0
-          else
-            _arguments '(-h --help)'{-h,--help}'[Dipslay help info]' && ret=0
-          fi
-          ;;
-      esac
-      ;;
-    vmodel)
-      _arguments \
-        '(-h --help)'{-h,--help}'[Dipslay help info]' \
-        '1: :->actions' \
-        '*::options:->options' && ret=0
-      case $state in
-        actions)
-          _describe -t commands "razor vmodel" _vmodel_arguments
-          ;;
-        options)
-          if [[ "$words[1]" == 'add' ]]; then
-            _arguments \
-              '(-t --template)'{-t,--template}"[The vmodel template to use for the new vmodel.]" \
-              '(-l --label)'{-l,--label}'[The label to use for the new vmodel.]' \
-              '(-h --help)'{-h,--help}'[Display vmodel add help info.]' && ret=0
           else
             _arguments '(-h --help)'{-h,--help}'[Dipslay help info]' && ret=0
           fi
@@ -258,30 +219,6 @@ case "$words[1]" in
                 #;;
             #esac
             #;;
-          else
-            _arguments '(-h --help)'{-h,--help}'[Dipslay help info]' && ret=0
-          fi
-          ;;
-      esac
-      ;;
-    task)
-      _arguments \
-        '(-h --help)'{-h,--help}'[Dipslay help info]' \
-        '1: :->actions' \
-        '*::options:->options' && ret=0
-      case $state in
-        actions)
-          _describe -t commands "razor task" _task_arguments
-          ;;
-        options)
-          if [[ "$words[1]" == 'add' ]]; then
-            _arguments \
-              '(-n --node_sn)'{-n,--node_sn}'[The node serial number for the task.]' \
-              '(-b --baking_mode)'{-b,--baking_mode}'[Should task do or only do baking(do|skip|solo)?]' \
-              '(-o --os)'{-o,--os}'[The OS to be installed in the task.]' \
-              '(-e --enabled)'{-e,--enabled}"[Should task be enabled (true|false) \[default: true\]?]" \
-              '(-t --template)'{-t,--template}'[The vmodel template to use for the new vmodel.]' \
-              '(-h --help)'{-h,--help}'[Display task add help info.]' && ret=0
           else
             _arguments '(-h --help)'{-h,--help}'[Dipslay help info]' && ret=0
           fi

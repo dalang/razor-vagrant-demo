@@ -48,3 +48,7 @@ export LANG=en_US.UTF-8
 
 # Customize to your needs...
 export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+alias razor='nocorrect razor'
+alias bin/razor='nocorrect bin/razor'
+
+export DISABLE_AUTO_TITLE=true
