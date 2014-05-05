@@ -63,15 +63,21 @@ end
 
 desc "Start here. Provision & configure the Razor server."
 task :start do
-  os = %x{uname -s 2>/dev/null}
-  unless os.start_with?("CYGWIN") or os.start_with?("MINGW32")
-    sh('librarian-puppet install')
-  else
+  if ENV['OS'] == 'Windows_NT'
     # librarian-puppet not work cause
     # puppet is not supported as a gem on Windows
     # so backup a copy of modules in win-modules
-    sh('mv win-modules modules')
+    sh('cp -R win-modules modules') unless File.exists?('modules')
+    sh('cp -R private/tools modules/tools') unless File.exists?('modules/tools')
+    sh('git clone https://github.com/puppetlabs/puppetlabs-razor.git modules/razor') unless File.exists?('modules/razor')
+    sh('git clone https://github.com/puppetlabs/puppetlabs-concat.git modules/concat') unless File.exists?('modules/concat')
+    sh('git clone https://github.com/puppetlabs/puppetlabs-dhcp.git modules/dhcp') unless File.exists?('modules/dhcp')
+  else
+    sh('librarian-puppet install')
   end
+
+  Dir.chdir('modules/razor') { %x( git checkout fbe23d39a9) }
+  
   # origin repo use vagrant 1.0.3 from gem
   # switch to use vagrant 1.2 installed via the official package
   VagrantWrapper.new.execute "up"

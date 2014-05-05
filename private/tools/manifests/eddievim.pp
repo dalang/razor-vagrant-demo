@@ -5,7 +5,7 @@ class tools::eddievim{
     exec { 'clone eddie-vim':
         cwd     => "/home/vagrant",
         user    => "vagrant",
-        command => "git clone git://github.com/kaochenlong/eddie-vim.git",
+        command => "git clone git://github.com/dalang/eddie-vim.git",
         creates => "/home/vagrant/eddie-vim",
         require => [Package['git'], Package['exuberant-ctags']]
     }
