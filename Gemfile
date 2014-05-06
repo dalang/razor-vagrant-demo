@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'vagrant-wrapper'
+gem 'vagrant-wrapper', :path=>"#{File.dirname(__FILE__)}/gem-vagrant-wrapper"
 gem 'vagrant'
 gem 'puppet', :platform => :ruby
 gem 'rake'

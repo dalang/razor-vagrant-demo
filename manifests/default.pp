@@ -37,15 +37,15 @@ node gold {
     path => ["/usr/bin", "/bin", "/usr/sbin", "/sbin", "/usr/local/bin", "/usr/local/sbin"]
   }
 
-  include razor
-  include tools
-  include tools::ohmyzsh
-  include tools::eddievim
-
   sudo::conf { 'vagrant':
     content => 'vagrant ALL=(ALL) NOPASSWD: ALL',
   }
 
+  include razor
+  include tools
+  include tools::ohmyzsh
+  include tools::eddievim
+  
   exec { '/opt/razor/bin/razor_daemon.rb start':
     user    => 'root',
     group   => 'root',
