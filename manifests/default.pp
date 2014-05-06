@@ -3,6 +3,10 @@ node gold {
   $ipaddr   = '172.16.0.2'
   $hostaddr = '172.16.0.1'
 
+  exec { "/usr/bin/apt-get update":
+    before  => Class['dhcp'],
+  }
+
   class { dhcp:
     dnsdomain   => [ 'localdomain' ],
     nameservers => [ $hostaddr ],
